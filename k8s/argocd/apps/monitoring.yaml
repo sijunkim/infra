@@ -18,6 +18,7 @@ spec:
             enabled: true
             size: 1Gi
             storageClassName: local-path
+          adminPassword: R9xr9ANsYz4sNT8jyqeXI4cQy333l5S08Svterbv
           initChownData:
             enabled: false
           ingress:
