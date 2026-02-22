@@ -1,0 +1,12 @@
+apiVersion: argocd-image-updater.argoproj.io/v1alpha1
+kind: ImageUpdater
+metadata:
+  name: image-updater
+  namespace: argocd
+spec:
+  applicationRefs:
+    - namePattern: naver-news
+      useAnnotations: true
+    - namePattern: friend-app
+      useAnnotations: true
+  namespace: argocd
