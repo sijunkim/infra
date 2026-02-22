@@ -18,6 +18,8 @@ spec:
             enabled: true
             size: 1Gi
             storageClassName: local-path
+          initChownData:
+            enabled: false
           ingress:
             enabled: false
         prometheus:
