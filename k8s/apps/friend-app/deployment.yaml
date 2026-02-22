@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: friend-app
+  namespace: prodesk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: friend-app
+  template:
+    metadata:
+      labels:
+        app: friend-app
+    spec:
+      containers:
+      - name: friend-app
+        image: ghcr.io/sijunkim/friend-app:master-placeholder
+        ports:
+        - containerPort: 3000
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: friend-app
+  namespace: prodesk
+spec:
+  type: ClusterIP
+  selector:
+    app: friend-app
+  ports:
+  - port: 3000
+    targetPort: 3000

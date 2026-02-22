@@ -1,0 +1,93 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: naver-news
+  namespace: prodesk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: naver-news
+  template:
+    metadata:
+      labels:
+        app: naver-news
+    spec:
+      containers:
+      - name: naver-news
+        image: ghcr.io/sijunkim/naver-news-spring:master-e0b0c0c
+        env:
+        - name: APP_PORT
+          value: "3579"
+        - name: DB_HOST
+          value: "mysql"
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_DATABASE
+          value: "naver_news"
+        - name: REDIS_HOST
+          value: "redis"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: REDIS_USERNAME
+          value: ""
+        - name: REDIS_TIMEOUT
+          value: "5000ms"
+        - name: DUPLICATED_COUNT
+          value: "3"
+        - name: NAVER_OPENAPI_URL
+          value: "https://openapi.naver.com/v1/search/news.json"
+        - name: NAVER_SEARCH_DISPLAY
+          value: "50"
+        - name: NAVER_SEARCH_START
+          value: "1"
+        - name: NAVER_SEARCH_SORT
+          value: "date"
+        - name: LOGSTASH_HOST
+          value: "logstash"
+        - name: LOGSTASH_TCP_PORT
+          value: "5044"
+        - name: ELK_ACTIVE
+          value: "false"
+        - name: ELASTICSEARCH_HOST
+          value: "elasticsearch"
+        - name: ELASTICSEARCH_PORT
+          value: "9200"
+        - name: ELASTICSEARCH_SCHEME
+          value: "http"
+        - name: CHATGPT_API_URL
+          value: "https://api.openai.com/v1/chat/completions"
+        - name: CHATGPT_MODEL
+          value: "gpt-4o-mini"
+        - name: CHATGPT_TEMPERATURE
+          value: "0.3"
+        - name: CHATGPT_MAX_TOKENS
+          value: "1000"
+        - name: CHATGPT_SUMMARY_MAX_TOKENS
+          value: "1500"
+        envFrom:
+        - secretRef:
+            name: naver-news-secret
+        ports:
+        - containerPort: 3579
+        resources:
+          requests:
+            cpu: 100m
+            memory: 512Mi
+          limits:
+            cpu: "1"
+            memory: 1Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: naver-news
+  namespace: prodesk
+spec:
+  type: NodePort
+  selector:
+    app: naver-news
+  ports:
+  - port: 3579
+    targetPort: 3579
+    nodePort: 30579
