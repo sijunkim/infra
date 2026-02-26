@@ -12,9 +12,9 @@ spec:
       - "--certificatesresolvers.letsencrypt.acme.email=papaya9349@naver.com"
       - "--certificatesresolvers.letsencrypt.acme.storage=/data/acme.json"
       - "--certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web"
+    hostNetwork: true
     service:
-      spec:
-        externalTrafficPolicy: Local
+      enabled: false
     ports:
       web:
         redirectTo:
