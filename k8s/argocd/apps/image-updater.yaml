@@ -9,4 +9,6 @@ spec:
       useAnnotations: true
     - namePattern: friend-app
       useAnnotations: true
+    - namePattern: airflow-dashboard
+      useAnnotations: true
   namespace: argocd
