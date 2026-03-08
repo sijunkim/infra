@@ -32,9 +32,7 @@ dags:
 
 logs:
   persistence:
-    enabled: true
-    size: 5Gi
-    accessMode: ReadWriteOnce
+    enabled: false
 
 statsd:
   enabled: true
