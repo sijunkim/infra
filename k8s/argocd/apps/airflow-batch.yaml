@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airflow-batch
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sijunkim/infra.git
+    targetRevision: master
+    path: k8s/apps/airflow-batch
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: airflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: airflow-batch-config
+  namespace: airflow
+data:
+  SUBWAY_STATIONS: "강남,서울,홍대입구,여의도,판교"
+  CRYPTO_COINS: "bitcoin,ethereum,solana"
+  WEATHER_LOCATIONS: "서울:60:127,강남:61:126,판교:62:123"
+  POPULATION_AREAS: "강남역,여의도,연남동,명동 관광특구,잠실 관광특구"
+  BATCH_OUTPUT_DIR: "/data"

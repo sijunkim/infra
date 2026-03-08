@@ -1,0 +1,67 @@
+executor: KubernetesExecutor
+
+webserver:
+  replicas: 1
+  service:
+    type: ClusterIP
+  defaultUser:
+    enabled: true
+    username: admin
+    password: changeme
+
+scheduler:
+  replicas: 1
+
+postgresql:
+  enabled: true
+  primary:
+    persistence:
+      enabled: true
+      size: 5Gi
+
+dags:
+  gitSync:
+    enabled: true
+    repo: https://github.com/sijunkim/airflow-dags.git
+    branch: main
+    subPath: dags
+    wait: 60
+    credentialsSecret: airflow-git-credentials
+
+logs:
+  persistence:
+    enabled: true
+    size: 5Gi
+
+statsd:
+  enabled: true
+
+extraObjects:
+  - apiVersion: traefik.io/v1alpha1
+    kind: Middleware
+    metadata:
+      name: internal-only
+      namespace: airflow
+    spec:
+      ipAllowList:
+        sourceRange:
+          - 192.168.0.0/24
+          - 127.0.0.1/32
+  - apiVersion: traefik.io/v1alpha1
+    kind: IngressRoute
+    metadata:
+      name: airflow-ingress
+      namespace: airflow
+    spec:
+      entryPoints:
+        - websecure
+      routes:
+        - match: Host(`airflow.kimsijun.com`)
+          kind: Rule
+          middlewares:
+            - name: internal-only
+          services:
+            - name: airflow-webserver
+              port: 8080
+      tls:
+        certResolver: letsencrypt
