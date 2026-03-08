@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: airflow-dashboard
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: app=ghcr.io/sijunkim/airflow-dashboard
+    argocd-image-updater.argoproj.io/app.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/app.allow-tags: regexp:^master-
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sijunkim/infra.git
+    targetRevision: master
+    path: k8s/apps/airflow-dashboard
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: airflow
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

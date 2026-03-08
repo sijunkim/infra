@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: airflow-dashboard
+  namespace: airflow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: airflow-dashboard
+  template:
+    metadata:
+      labels:
+        app: airflow-dashboard
+    spec:
+      containers:
+      - name: airflow-dashboard
+        image: ghcr.io/sijunkim/airflow-dashboard:master-placeholder
+        ports:
+        - containerPort: 3000
+        env:
+        - name: DATA_DIR
+          value: /data
+        - name: NODE_ENV
+          value: production
+        volumeMounts:
+        - name: batch-data
+          mountPath: /data
+          readOnly: true
+        resources:
+          requests:
+            cpu: 50m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          periodSeconds: 30
+          initialDelaySeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 3000
+          periodSeconds: 10
+          initialDelaySeconds: 5
+      volumes:
+      - name: batch-data
+        persistentVolumeClaim:
+          claimName: batch-data
+      imagePullSecrets:
+      - name: ghcr-secret

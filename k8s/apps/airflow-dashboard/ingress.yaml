@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: airflow-dashboard
+  namespace: airflow
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`airflow-dashboard.kimsijun.com`)
+      kind: Rule
+      services:
+        - name: airflow-dashboard
+          port: 3000
+  tls:
+    certResolver: letsencrypt
