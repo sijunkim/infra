@@ -7,7 +7,7 @@ webserver:
   defaultUser:
     enabled: true
     username: admin
-    password: changeme
+    password: "-DPT4vCpdKywvskG"
 
 scheduler:
   replicas: 1

@@ -1,13 +1,20 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: prometheus-basic-auth
+  namespace: monitoring
+type: Opaque
+stringData:
+  users: "admin:$apr1$pRHQrodF$HkdOMEsdB0p.1j6Z7x5VB/"
+---
 apiVersion: traefik.io/v1alpha1
 kind: Middleware
 metadata:
-  name: internal-only
+  name: prometheus-auth
   namespace: monitoring
 spec:
-  ipAllowList:
-    sourceRange:
-      - 192.168.0.0/24
-      - 127.0.0.1/32
+  basicAuth:
+    secret: prometheus-basic-auth
 ---
 apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
@@ -20,8 +27,6 @@ spec:
   routes:
     - match: Host(`grafana.kimsijun.com`)
       kind: Rule
-      middlewares:
-        - name: internal-only
       services:
         - name: monitoring-grafana
           port: 80
@@ -40,7 +45,7 @@ spec:
     - match: Host(`prometheus.kimsijun.com`)
       kind: Rule
       middlewares:
-        - name: internal-only
+        - name: prometheus-auth
       services:
         - name: monitoring-kube-prometheus-prometheus
           port: 9090

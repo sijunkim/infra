@@ -1,15 +1,4 @@
 apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: internal-only
-  namespace: argocd
-spec:
-  ipAllowList:
-    sourceRange:
-      - 192.168.0.0/24
-      - 127.0.0.1/32
----
-apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: argocd-server
@@ -20,8 +9,6 @@ spec:
   routes:
     - match: Host(`argocd.kimsijun.com`)
       kind: Rule
-      middlewares:
-        - name: internal-only
       services:
         - name: argocd-server
           port: 80

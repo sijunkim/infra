@@ -1,15 +1,4 @@
 apiVersion: traefik.io/v1alpha1
-kind: Middleware
-metadata:
-  name: internal-only
-  namespace: airflow
-spec:
-  ipAllowList:
-    sourceRange:
-      - 192.168.0.0/24
-      - 127.0.0.1/32
----
-apiVersion: traefik.io/v1alpha1
 kind: IngressRoute
 metadata:
   name: airflow-ingress
@@ -20,8 +9,6 @@ spec:
   routes:
     - match: Host(`airflow.kimsijun.com`)
       kind: Rule
-      middlewares:
-        - name: internal-only
       services:
         - name: airflow-webserver
           port: 8080
