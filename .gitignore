@@ -4,3 +4,7 @@
 *.tfstate.backup
 *.tfvars
 !*.tfvars.example
+
+# SOPS
+keys.txt
+*.dec.yaml

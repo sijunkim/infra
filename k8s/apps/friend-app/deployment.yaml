@@ -25,16 +25,3 @@ spec:
           limits:
             cpu: 200m
             memory: 256Mi
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: friend-app
-  namespace: prodesk
-spec:
-  type: ClusterIP
-  selector:
-    app: friend-app
-  ports:
-  - port: 3000
-    targetPort: 3000

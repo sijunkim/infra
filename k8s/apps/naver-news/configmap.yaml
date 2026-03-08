@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: naver-news-config
+  namespace: prodesk
+data:
+  APP_PORT: "3579"
+  DB_HOST: "mysql"
+  DB_PORT: "3306"
+  DB_DATABASE: "naver_news"
+  REDIS_HOST: "redis"
+  REDIS_PORT: "6379"
+  REDIS_USERNAME: ""
+  REDIS_TIMEOUT: "5000ms"
+  DUPLICATED_COUNT: "3"
+  NAVER_OPENAPI_URL: "https://openapi.naver.com/v1/search/news.json"
+  NAVER_SEARCH_DISPLAY: "50"
+  NAVER_SEARCH_START: "1"
+  NAVER_SEARCH_SORT: "date"
+  LOGSTASH_HOST: "logstash"
+  LOGSTASH_TCP_PORT: "5044"
+  ELK_ACTIVE: "false"
+  ELASTICSEARCH_HOST: "elasticsearch"
+  ELASTICSEARCH_PORT: "9200"
+  ELASTICSEARCH_SCHEME: "http"
+  CHATGPT_API_URL: "https://api.openai.com/v1/chat/completions"
+  CHATGPT_MODEL: "gpt-4o-mini"
+  CHATGPT_TEMPERATURE: "0.3"
+  CHATGPT_MAX_TOKENS: "1000"
+  CHATGPT_SUMMARY_MAX_TOKENS: "1500"

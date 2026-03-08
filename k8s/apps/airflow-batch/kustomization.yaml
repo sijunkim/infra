@@ -3,3 +3,6 @@ kind: Kustomization
 resources:
   - configmap.yaml
   - pvc-batch-data.yaml
+  - ingress.yaml
+generators:
+  - ./secret-generator.yaml

@@ -27,3 +27,22 @@ spec:
           port: 80
   tls:
     certResolver: letsencrypt
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`prometheus.kimsijun.com`)
+      kind: Rule
+      middlewares:
+        - name: internal-only
+      services:
+        - name: monitoring-kube-prometheus-prometheus
+          port: 9090
+  tls:
+    certResolver: letsencrypt
