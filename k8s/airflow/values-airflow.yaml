@@ -5,9 +5,7 @@ webserver:
   service:
     type: ClusterIP
   defaultUser:
-    enabled: true
-    username: admin
-    password: "-DPT4vCpdKywvskG"
+    enabled: false
 
 scheduler:
   replicas: 1
