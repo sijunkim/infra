@@ -1,5 +1,9 @@
 executor: KubernetesExecutor
 
+config:
+  webserver:
+    default_ui_timezone: Asia/Seoul
+
 webserver:
   replicas: 1
   service:
