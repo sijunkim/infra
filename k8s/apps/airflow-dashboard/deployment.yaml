@@ -13,13 +13,6 @@ spec:
       labels:
         app: airflow-dashboard
     spec:
-      initContainers:
-      - name: fix-data-permissions
-        image: busybox:1.37
-        command: ["sh", "-c", "chown -R 100:101 /data && chmod -R u+rw /data"]
-        volumeMounts:
-        - name: batch-data
-          mountPath: /data
       containers:
       - name: airflow-dashboard
         image: ghcr.io/sijunkim/airflow-dashboard:master-9abde0e
@@ -33,7 +26,7 @@ spec:
         volumeMounts:
         - name: batch-data
           mountPath: /data
-          readOnly: false
+          readOnly: true
         resources:
           requests:
             cpu: 50m
