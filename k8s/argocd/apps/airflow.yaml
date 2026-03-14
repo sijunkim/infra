@@ -18,9 +18,21 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: airflow
+  ignoreDifferences:
+    - group: ""
+      kind: Secret
+      name: airflow-webserver-secret-key
+      jsonPointers:
+        - /data
+    - group: apps
+      kind: Deployment
+      name: airflow-webserver
+      jqPathExpressions:
+        - .spec.template.metadata.annotations."checksum/webserver-secret-key"
   syncPolicy:
     automated:
       prune: true
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - RespectIgnoreDifferences=true
