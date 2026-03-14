@@ -111,6 +111,8 @@ ArgoCD 오버라이드:     image: ghcr.io/sijunkim/naver-news-spring:master-484
 
 ## App of Apps 구조
 
+> 디렉토리 구조, 계층별 동작 원리, Secret/Ingress 설정 상세는 [k8s-structure.md](./k8s-structure.md) 참고.
+
 ```
 root-app (ArgoCD Application)
 │  감시: infra/k8s/argocd/apps/

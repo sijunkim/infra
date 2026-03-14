@@ -6,6 +6,7 @@ config:
 
 webserver:
   replicas: 1
+  webserverSecretKey: c0k3a05QREtza1FaUXhRUjVibFE3NGZKZHlzbUxYUnY=
   service:
     type: ClusterIP
   defaultUser:
