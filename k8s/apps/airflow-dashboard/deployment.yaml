@@ -26,7 +26,7 @@ spec:
         volumeMounts:
         - name: batch-data
           mountPath: /data
-          readOnly: true
+          readOnly: false
         resources:
           requests:
             cpu: 50m
