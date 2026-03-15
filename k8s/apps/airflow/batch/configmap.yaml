@@ -9,3 +9,8 @@ data:
   WEATHER_LOCATIONS: "서울:60:127,강남:61:126,판교:62:123"
   POPULATION_AREAS: "강남역,여의도,연남동,명동 관광특구,잠실 관광특구"
   BATCH_OUTPUT_DIR: "/data"
+  DB_HOST: "mysql.prodesk.svc.cluster.local"
+  DB_PORT: "3306"
+  DB_NAME: "airflow_batch"
+  DB_USER: "kimsijun"
+  DB_PASSWORD: "1234"
