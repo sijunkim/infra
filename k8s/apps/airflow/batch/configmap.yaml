@@ -12,5 +12,3 @@ data:
   DB_HOST: "mysql.prodesk.svc.cluster.local"
   DB_PORT: "3306"
   DB_NAME: "airflow_batch"
-  DB_USER: "kimsijun"
-  DB_PASSWORD: "1234"
