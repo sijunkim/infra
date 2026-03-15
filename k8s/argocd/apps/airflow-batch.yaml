@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: https://github.com/sijunkim/infra.git
     targetRevision: master
-    path: k8s/apps/airflow-batch
+    path: k8s/apps/airflow/batch
   destination:
     server: https://kubernetes.default.svc
     namespace: airflow
