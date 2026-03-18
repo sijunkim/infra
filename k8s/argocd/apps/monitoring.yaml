@@ -40,11 +40,15 @@ spec:
               spring-boot-statistics:
                 gnetId: 19004
                 revision: 1
-                datasource: Prometheus
+                datasource:
+                - name: DS_PROMETHEUS
+                  value: Prometheus
               jvm-micrometer:
                 gnetId: 4701
                 revision: 1
-                datasource: Prometheus
+                datasource:
+                - name: DS_PROMETHEUS
+                  value: Prometheus
         prometheus:
           prometheusSpec:
             serviceMonitorSelectorNilUsesHelmValues: false
