@@ -34,7 +34,15 @@ spec:
                     requests:
                       storage: 10Gi
         alertmanager:
-          enabled: false
+          enabled: true
+          alertmanagerSpec:
+            storage:
+              volumeClaimTemplate:
+                spec:
+                  storageClassName: local-path
+                  resources:
+                    requests:
+                      storage: 1Gi
         # k3s bundles these into the k3s binary, ServiceMonitor will fail
         kubeControllerManager:
           enabled: false
