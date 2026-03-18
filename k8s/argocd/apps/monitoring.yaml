@@ -45,7 +45,7 @@ spec:
                   value: Prometheus
               jvm-micrometer:
                 gnetId: 4701
-                revision: 1
+                revision: 10
                 datasource:
                 - name: DS_PROMETHEUS
                   value: Prometheus
