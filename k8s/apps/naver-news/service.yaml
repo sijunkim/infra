@@ -3,6 +3,8 @@ kind: Service
 metadata:
   name: naver-news
   namespace: prodesk
+  labels:
+    app: naver-news
 spec:
   type: NodePort
   selector:
