@@ -8,6 +8,7 @@ spec:
   selector:
     app: naver-news
   ports:
-  - port: 3579
+  - name: http
+    port: 3579
     targetPort: 3579
     nodePort: 30579

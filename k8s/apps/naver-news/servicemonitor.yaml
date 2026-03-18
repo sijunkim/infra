@@ -1,0 +1,13 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: naver-news
+  namespace: prodesk
+spec:
+  selector:
+    matchLabels:
+      app: naver-news
+  endpoints:
+  - port: http
+    path: /actuator/prometheus
+    interval: 30s

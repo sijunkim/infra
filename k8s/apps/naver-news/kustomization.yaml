@@ -4,5 +4,6 @@ resources:
   - configmap.yaml
   - deployment.yaml
   - service.yaml
+  - servicemonitor.yaml
 generators:
   - ./secret-generator.yaml
