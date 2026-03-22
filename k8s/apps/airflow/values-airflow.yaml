@@ -40,6 +40,10 @@ logs:
   persistence:
     enabled: false
 
+cleanup:
+  enabled: true
+  schedule: "*/15 * * * *"
+
 statsd:
   enabled: true
 
