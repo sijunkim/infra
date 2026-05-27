@@ -18,6 +18,9 @@ spec:
         image: ghcr.io/sijunkim/friend-app:master-placeholder
         ports:
         - containerPort: 3000
+        envFrom:
+        - secretRef:
+            name: friend-app-secret
         resources:
           requests:
             cpu: 50m
