@@ -1,0 +1,28 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: friend-app-snapshot
+  namespace: prodesk
+spec:
+  schedule: "0 15 * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 1
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: snapshot
+            image: curlimages/curl:8.10.1
+            env:
+            - name: ASSETS_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: friend-app-secret
+                  key: ASSETS_TOKEN
+            command:
+            - sh
+            - -c
+            - 'curl -fsS -X POST -H "Authorization: Bearer $ASSETS_TOKEN" http://friend-app:3000/api/snapshot'
