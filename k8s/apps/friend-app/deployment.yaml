@@ -13,6 +13,7 @@ spec:
       labels:
         app: friend-app
     spec:
+      enableServiceLinks: false
       containers:
       - name: friend-app
         image: ghcr.io/sijunkim/friend-app:master-placeholder
