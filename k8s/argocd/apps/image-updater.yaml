@@ -11,4 +11,6 @@ spec:
       useAnnotations: true
     - namePattern: airflow-dashboard
       useAnnotations: true
+    - namePattern: asset-app
+      useAnnotations: true
   namespace: argocd
