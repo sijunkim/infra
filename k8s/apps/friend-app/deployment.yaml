@@ -19,15 +19,6 @@ spec:
         image: ghcr.io/sijunkim/friend-app:master-placeholder
         ports:
         - containerPort: 3000
-        envFrom:
-        - secretRef:
-            name: friend-app-secret
-        env:
-        - name: REDIS_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: redis-secret
-              key: REDIS_PASSWORD
         resources:
           requests:
             cpu: 50m
