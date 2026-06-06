@@ -16,7 +16,7 @@ spec:
       enableServiceLinks: false
       containers:
       - name: asset-app
-        image: ghcr.io/sijunkim/asset-app:master-44d15ea
+        image: ghcr.io/sijunkim/asset-app:master-ad9f052
         ports:
         - containerPort: 8080
         envFrom:
