@@ -1,0 +1,31 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dama
+  namespace: prodesk
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    # 슬랙/내부 API 는 백엔드로 (더 구체적 → 높은 priority)
+    - match: Host(`dama.kimsijun.com`) && PathPrefix(`/slack`)
+      kind: Rule
+      priority: 20
+      services:
+        - name: dama-api
+          port: 8080
+    - match: Host(`dama.kimsijun.com`) && PathPrefix(`/api`)
+      kind: Rule
+      priority: 20
+      services:
+        - name: dama-api
+          port: 8080
+    # 그 외 전부 프론트로
+    - match: Host(`dama.kimsijun.com`)
+      kind: Rule
+      priority: 10
+      services:
+        - name: dama-web
+          port: 3000
+  tls:
+    certResolver: letsencrypt
