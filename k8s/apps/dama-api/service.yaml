@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: dama-api
+  namespace: prodesk
+spec:
+  type: ClusterIP
+  selector:
+    app: dama-api
+  ports:
+  - port: 8080
+    targetPort: 8080

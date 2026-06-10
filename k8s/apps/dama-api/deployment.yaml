@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dama-api
+  namespace: prodesk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dama-api
+  template:
+    metadata:
+      labels:
+        app: dama-api
+    spec:
+      containers:
+      - name: dama-api
+        image: ghcr.io/sijunkim/dama-api:master-6de8fed
+        envFrom:
+        - configMapRef:
+            name: dama-api-config
+        - secretRef:
+            name: dama-api-secret
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 40
+          periodSeconds: 20
+        resources:
+          requests:
+            cpu: 100m
+            memory: 384Mi
+          limits:
+            cpu: "1"
+            memory: 768Mi
