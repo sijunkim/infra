@@ -16,23 +16,15 @@ spec:
       enableServiceLinks: false
       imagePullSecrets:
         - name: ghcr-pull
-      # uploads 볼륨 쓰기 권한(이미지 app uid/gid=10001 과 일치).
+      # 비루트 실행(이미지 app uid/gid=10001 과 일치). 이미지는 메모리에서만 처리 — 영속 볼륨 없음.
       securityContext:
         runAsUser: 10001
         runAsGroup: 10001
-        fsGroup: 10001
-      volumes:
-        - name: uploads
-          persistentVolumeClaim:
-            claimName: dama-uploads
       containers:
         - name: dama-api
           image: ghcr.io/sijunkim/dama-api:master-d7f8335
           ports:
             - containerPort: 8080
-          volumeMounts:
-            - name: uploads
-              mountPath: /app/uploads
           env:
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:MaxRAMPercentage=75"
