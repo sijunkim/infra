@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: elasticsearch
+  namespace: prodesk
+spec:
+  # 클러스터 내부 접근은 http://elasticsearch:9200(dama-api 등). NodePort 는 운영 점검용.
+  type: NodePort
+  selector:
+    app: elasticsearch
+  ports:
+  - port: 9200
+    targetPort: 9200
+    nodePort: 30920
