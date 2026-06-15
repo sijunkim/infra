@@ -1,0 +1,16 @@
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dama-web
+  namespace: prodesk
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`dama.kimsijun.com`)
+      kind: Rule
+      services:
+        - name: dama-web
+          port: 3000
+  tls:
+    certResolver: letsencrypt

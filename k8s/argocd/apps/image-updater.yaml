@@ -15,4 +15,6 @@ spec:
       useAnnotations: true
     - namePattern: dama-api
       useAnnotations: true
+    - namePattern: dama-web
+      useAnnotations: true
   namespace: argocd

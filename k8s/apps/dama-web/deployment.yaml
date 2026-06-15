@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dama-web
+  namespace: prodesk
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dama-web
+  template:
+    metadata:
+      labels:
+        app: dama-web
+    spec:
+      enableServiceLinks: false
+      imagePullSecrets:
+        - name: ghcr-pull
+      containers:
+        - name: dama-web
+          image: ghcr.io/sijunkim/dama-web:master-4814dbf
+          ports:
+            - containerPort: 3000
+          env:
+            - name: PORT
+              value: "3000"
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 15
+            periodSeconds: 20
