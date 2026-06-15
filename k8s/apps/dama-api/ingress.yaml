@@ -1,0 +1,49 @@
+# 공개 HTTPS 노출 — dama-api.kimsijun.com (Traefik websecure + letsencrypt).
+# 레이트리밋은 인증·스캔 경로에만 적용(공개 시 무방비 방지). 그 외 경로는 인증 토큰으로 이미 보호됨.
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: dama-api
+  namespace: prodesk
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    # 인증·부트스트랩(/auth*) — IP당 분당 한도(brute/DoS 방지).
+    - match: Host(`dama-api.kimsijun.com`) && PathPrefix(`/auth`)
+      kind: Rule
+      services:
+        - name: dama-api
+          port: 8080
+      middlewares:
+        - name: dama-api-ratelimit
+    # 영수증 스캔(/scan) — OCR·LLM 비용 보호.
+    - match: Host(`dama-api.kimsijun.com`) && PathPrefix(`/scan`)
+      kind: Rule
+      services:
+        - name: dama-api
+          port: 8080
+      middlewares:
+        - name: dama-api-ratelimit
+    # 그 외 모든 경로 — 레이트리밋 없음(access 토큰으로 보호).
+    - match: Host(`dama-api.kimsijun.com`)
+      kind: Rule
+      services:
+        - name: dama-api
+          port: 8080
+  tls:
+    certResolver: letsencrypt
+---
+# 레이트리밋 — IP(sourceCriterion)당 분당 약 30요청(burst 15). period=1m 기준 average=30.
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: dama-api-ratelimit
+  namespace: prodesk
+spec:
+  rateLimit:
+    average: 30
+    burst: 15
+    period: 1m
+    sourceCriterion:
+      ipStrategy: {}

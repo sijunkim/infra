@@ -22,7 +22,7 @@ spec:
         runAsGroup: 10001
       containers:
         - name: dama-api
-          image: ghcr.io/sijunkim/dama-api:master-d7f8335
+          image: ghcr.io/sijunkim/dama-api:master-e9803f5
           ports:
             - containerPort: 8080
           env:
@@ -44,6 +44,18 @@ spec:
                 secretKeyRef:
                   name: mysql-secret
                   key: MYSQL_PASSWORD
+            # Redis — refresh 토큰·token_version 저장(폐기). 비번은 기존 공유 redis-secret 재사용(평문 금지).
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_USERNAME
+              value: ""
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
           envFrom:
             - secretRef:
                 name: dama-api-secret
