@@ -1,0 +1,13 @@
+# 업로드 주문내역 이미지 영속 보관(local-path). 파드 재시작에도 유지.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dama-uploads
+  namespace: prodesk
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 1Gi
