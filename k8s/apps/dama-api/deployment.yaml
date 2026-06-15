@@ -27,7 +27,7 @@ spec:
             claimName: dama-uploads
       containers:
         - name: dama-api
-          image: ghcr.io/sijunkim/dama-api:master-641d78e
+          image: ghcr.io/sijunkim/dama-api:master-c374968
           ports:
             - containerPort: 8080
           volumeMounts:
