@@ -13,4 +13,6 @@ spec:
       useAnnotations: true
     - namePattern: asset-app
       useAnnotations: true
+    - namePattern: dama-api
+      useAnnotations: true
   namespace: argocd

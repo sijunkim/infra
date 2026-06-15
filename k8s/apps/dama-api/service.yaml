@@ -1,0 +1,15 @@
+# LAN 전용 NodePort(30808). 홈 WiFi에서 http://192.168.0.46:30808 로 접근.
+# Ingress 없음 — Traefik/DDNS 미연결이라 외부에서 접근 불가.
+apiVersion: v1
+kind: Service
+metadata:
+  name: dama-api
+  namespace: prodesk
+spec:
+  type: NodePort
+  selector:
+    app: dama-api
+  ports:
+    - port: 8080
+      targetPort: 8080
+      nodePort: 30808
