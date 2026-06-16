@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: dama-api-meal-photos-pvc
+  namespace: prodesk
+  annotations:
+    # 사진 데이터 보호: ArgoCD 가 PVC 를 절대 삭제하지 못하게 한다.
+    # PVC 가 사라지면 local PV(/home/kimsijun/repository/resources/dama-api/meal-photos) 바인딩이 끊겨 데이터 손실 위험.
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  volumeName: dama-api-meal-photos-pv
+  resources:
+    requests:
+      storage: 5Gi
