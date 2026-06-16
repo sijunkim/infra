@@ -27,7 +27,10 @@ spec:
             - containerPort: 8080
           env:
             - name: JAVA_TOOL_OPTIONS
-              value: "-XX:MaxRAMPercentage=75"
+              value: "-XX:MaxRAMPercentage=60"
+            # Elasticsearch — 냉장고 품목 검색 색인. 코드 기본값 의존 대신 서비스 DNS 명시 주입.
+            - name: ELASTICSEARCH_URI
+              value: "http://elasticsearch:9200"
             - name: DB_HOST
               value: "mysql"
             - name: DB_PORT
@@ -62,10 +65,10 @@ spec:
           resources:
             requests:
               cpu: 100m
-              memory: 256Mi
+              memory: 512Mi
             limits:
               cpu: "1"
-              memory: 512Mi
+              memory: 1Gi
           readinessProbe:
             httpGet:
               path: /actuator/health/readiness
