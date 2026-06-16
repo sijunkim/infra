@@ -1,0 +1,22 @@
+apiVersion: v1
+data:
+    redis.conf: ENC[AES256_GCM,data:Yowfp9shimknaQBhSNvaouxcWrPt4wI7stHYjS8CllIesLcdefGHYButNKtKl6bO6yAORBZMXuEEHel/n+Gc95K5vKdGjy4NomGX9fkR4Ur8w6Tp15oFJrFXIdJmireAv5igZuhGOIjLU78TmDYKMfPNM+D+rSZjWdOtbK2VZEqTXdy7Vu0/GlxbgZUUQkikR/znun/m7V4blENLo1HWMoZj8jb+JOUYcCFf84L/TifKN984QVM+bzeWHkY9UMyyb0QYJ4e/13Xn8aCJ8XC1/Kv9IJSiUJJ8B/nRjLq517MJ8NtwhT88P9KXenVweT/Yt93qx+Ls6EH4jNiBpohQForfhMdJnn0ya63d3C8M2ozO7LkZWT0L3XHize7WqtvgtsH9sPO82jNhZDwSUimDh9Btz81a1QdAg1lZTFnh0WaX53+Sp+lOAkeQIFFAV9qv,iv:yss02Ib6AMtfbxNEuVLq6PlDfQcH5s2XqtL/KwEeSAQ=,tag:ZyPwKc9CoPWbZNYwoc3gOQ==,type:str]
+kind: ConfigMap
+metadata:
+    name: redis-config
+    namespace: prodesk
+sops:
+    age:
+        - recipient: age1pkq2sx0xg0sjpr57t9yqtar5sg255fafhah9kdc5luh738xzk9psc4pkkl
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAvRStqZzFQSGJydFRMQVdT
+            Z01FcHJmdU1XSk8vQVg4YldsR096UWtOcGcwCm5DNFlmU0dNVFdCUW1Ed2FNNVp5
+            NmI0OWx5RXRDWTBZUVRUdU56QjJ0b2cKLS0tIEpSVzloQVNHeFJ2ODh5MWVMUEJr
+            Rml4VUNkMnpSa1lsa3FWNmdBNHVHUUEKuLNEoUFkPl4ak6hoBoQPP1hN6w+3hQQU
+            Unn+YxBbMDfm0dKuceaUlA8/AumkulFIcgls15fYRaAkQ+hLnWMzig==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-06-16T01:21:37Z"
+    mac: ENC[AES256_GCM,data:W6Td6RzFmJzejjPvq4KTZWZq8yhooLabm7exBINHOSVlVN0xwjsaZEKm0oguKeqZc1oh/pePQ1qcDh1eUyoexEhca62/hyk4f6xf78UkexYnkGOB8uSi2wQkb5fQfRPaYrQkU11M6yMcnBqNn7k1m2K7z+DpBy1/6Do3y6O6iss=,iv:5dE+UPEfpg0sGO2UK5Nmo+c7sIrVHp1JsEWl/ry7ZrE=,tag:CrdvKRydXJmgxrhpRaE+0g==,type:str]
+    encrypted_regex: ^(data|stringData)$
+    version: 3.12.1

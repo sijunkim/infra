@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: redis
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sijunkim/infra.git
+    targetRevision: master
+    path: k8s/infra/redis
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: prodesk
+  # 공유 인프라(naver-news, dama-api 등이 사용) — 안전 우선.
+  # automated 블록 없음 → 수동 sync 만 허용(의도치 않은 prune/덮어쓰기 방지).
+  # 기존 라이브 리소스를 무중단 adopt 하기 위해 diff no-op 확인 후 수동 sync 한다.
+  syncPolicy:
+    syncOptions:
+      - CreateNamespace=true
