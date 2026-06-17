@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: prodesk
+spec:
+  # 무상태(데이터는 ES saved objects 에 저장) — 단일 레플리카면 충분.
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+    spec:
+      containers:
+      - name: kibana
+        # ES 와 같은 8.8.2 로 고정(메이저·마이너 일치 필수). image-updater 대상 아님.
+        image: docker.elastic.co/kibana/kibana:8.8.2
+        env:
+        # ES 는 클러스터 내부 전용(security off) — 같은 prodesk ns 의 elasticsearch 서비스로 무인증 접속.
+        - name: ELASTICSEARCH_HOSTS
+          value: http://elasticsearch:9200
+        - name: SERVER_HOST
+          value: "0.0.0.0"
+        - name: SERVER_NAME
+          value: kibana.kimsijun.com
+        # 공개 URL — Traefik(TLS 종료) 뒤에 있으므로 외부 주소를 알려줘 링크/리다이렉트가 어긋나지 않게 한다.
+        - name: SERVER_PUBLICBASEURL
+          value: https://kibana.kimsijun.com
+        # saved object 암호화 키 고정(재시작 시 임시키 재생성 경고 제거). 단일 사용자 내부용.
+        - name: XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY
+          value: dama_kibana_saved_objects_key_32ch!!
+        ports:
+        - containerPort: 5601
+        resources:
+          requests:
+            cpu: 200m
+            memory: 1Gi
+          limits:
+            cpu: "1"
+            memory: 1536Mi
+        readinessProbe:
+          httpGet:
+            path: /api/status
+            port: 5601
+          initialDelaySeconds: 60
+          periodSeconds: 15
+          failureThreshold: 10
+        livenessProbe:
+          httpGet:
+            path: /api/status
+            port: 5601
+          initialDelaySeconds: 120
+          periodSeconds: 30
+          failureThreshold: 6

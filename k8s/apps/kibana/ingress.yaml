@@ -1,0 +1,39 @@
+# Kibana 외부 노출 — Traefik IngressRoute + basicAuth(grafana 와 동일 id/pw).
+# ES security 가 off 라 Kibana 자체 로그인이 없어, grafana 자격증명으로 basicAuth 를 건다.
+# users 해시는 grafana admin 비밀번호의 apr1 해시(평문 아님) — prometheus-basic-auth 와 동일 패턴.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: kibana-basic-auth
+  namespace: prodesk
+type: Opaque
+stringData:
+  users: "admin:$apr1$Oii.xRLH$a22ULi8axPwDPjML6.5vh0"
+---
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: kibana-auth
+  namespace: prodesk
+spec:
+  basicAuth:
+    secret: kibana-basic-auth
+---
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: kibana
+  namespace: prodesk
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`kibana.kimsijun.com`)
+      kind: Rule
+      middlewares:
+        - name: kibana-auth
+      services:
+        - name: kibana
+          port: 5601
+  tls:
+    certResolver: letsencrypt
