@@ -1,0 +1,91 @@
+apiVersion: v1
+data:
+  dama-analytics.json: |
+    {
+      "uid": "dama-analytics",
+      "title": "Dama 행동 분석",
+      "tags": ["dama", "analytics"],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "5m",
+      "time": { "from": "now-7d", "to": "now" },
+      "templating": { "list": [] },
+      "annotations": { "list": [] },
+      "panels": [
+        {
+          "id": 1,
+          "type": "timeseries",
+          "title": "이벤트 추이 (전체)",
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+          "datasource": { "type": "elasticsearch", "uid": "dama-events" },
+          "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 } }, "overrides": [] },
+          "options": { "legend": { "showLegend": true } },
+          "targets": [
+            {
+              "refId": "A",
+              "query": "*",
+              "metrics": [ { "id": "1", "type": "count" } ],
+              "bucketAggs": [ { "id": "2", "type": "date_histogram", "field": "created_at", "settings": { "interval": "auto" } } ]
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "type": "timeseries",
+          "title": "DAU (일별 활성 사용자, anon_id 고유수)",
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+          "datasource": { "type": "elasticsearch", "uid": "dama-events" },
+          "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 } }, "overrides": [] },
+          "options": { "legend": { "showLegend": false } },
+          "targets": [
+            {
+              "refId": "A",
+              "query": "*",
+              "metrics": [ { "id": "1", "type": "cardinality", "field": "anon_id" } ],
+              "bucketAggs": [ { "id": "2", "type": "date_histogram", "field": "created_at", "settings": { "interval": "1d" } } ]
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "type": "table",
+          "title": "버튼 클릭 순위 (type:tap)",
+          "gridPos": { "h": 9, "w": 12, "x": 0, "y": 8 },
+          "datasource": { "type": "elasticsearch", "uid": "dama-events" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "showHeader": true },
+          "targets": [
+            {
+              "refId": "A",
+              "query": "type:tap",
+              "metrics": [ { "id": "1", "type": "count" } ],
+              "bucketAggs": [ { "id": "2", "type": "terms", "field": "name", "settings": { "order": "desc", "orderBy": "_count", "size": "20" } } ]
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "table",
+          "title": "화면별 평균 체류시간 ms (type:screen_view)",
+          "gridPos": { "h": 9, "w": 12, "x": 12, "y": 8 },
+          "datasource": { "type": "elasticsearch", "uid": "dama-events" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "showHeader": true },
+          "targets": [
+            {
+              "refId": "A",
+              "query": "type:screen_view",
+              "metrics": [ { "id": "1", "type": "avg", "field": "duration_ms" } ],
+              "bucketAggs": [ { "id": "2", "type": "terms", "field": "screen", "settings": { "order": "desc", "orderBy": "1", "size": "20" } } ]
+            }
+          ]
+        }
+      ]
+    }
+kind: ConfigMap
+metadata:
+  labels:
+    grafana_dashboard: "1"
+  name: dama-analytics-dashboard
+  namespace: monitoring

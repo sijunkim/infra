@@ -1,0 +1,21 @@
+apiVersion: v1
+data:
+  dama-events-datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      - name: dama-events
+        uid: dama-events
+        type: elasticsearch
+        access: proxy
+        url: http://elasticsearch.prodesk:9200
+        isDefault: false
+        editable: true
+        jsonData:
+          index: dama-event
+          timeField: created_at
+kind: ConfigMap
+metadata:
+  labels:
+    grafana_datasource: "1"
+  name: dama-events-datasource
+  namespace: monitoring
