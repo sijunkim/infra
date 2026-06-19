@@ -7,7 +7,7 @@ data:
       "tags": ["dama", "analytics"],
       "timezone": "browser",
       "schemaVersion": 39,
-      "version": 1,
+      "version": 2,
       "refresh": "5m",
       "time": { "from": "now-7d", "to": "now" },
       "templating": { "list": [] },
@@ -50,7 +50,7 @@ data:
         {
           "id": 3,
           "type": "table",
-          "title": "버튼 클릭 순위 (type:tap)",
+          "title": "버튼 클릭 순위",
           "gridPos": { "h": 9, "w": 12, "x": 0, "y": 8 },
           "datasource": { "type": "elasticsearch", "uid": "dama-events" },
           "fieldConfig": { "defaults": {}, "overrides": [] },
@@ -60,14 +60,14 @@ data:
               "refId": "A",
               "query": "type:tap",
               "metrics": [ { "id": "1", "type": "count" } ],
-              "bucketAggs": [ { "id": "2", "type": "terms", "field": "name", "settings": { "order": "desc", "orderBy": "_count", "size": "20" } } ]
+              "bucketAggs": [ { "id": "2", "type": "terms", "field": "props.nameLabel", "settings": { "order": "desc", "orderBy": "_count", "size": "50" } } ]
             }
           ]
         },
         {
           "id": 4,
           "type": "table",
-          "title": "화면별 평균 체류시간 ms (type:screen_view)",
+          "title": "화면별 평균 체류시간 (ms)",
           "gridPos": { "h": 9, "w": 12, "x": 12, "y": 8 },
           "datasource": { "type": "elasticsearch", "uid": "dama-events" },
           "fieldConfig": { "defaults": {}, "overrides": [] },
@@ -77,7 +77,24 @@ data:
               "refId": "A",
               "query": "type:screen_view",
               "metrics": [ { "id": "1", "type": "avg", "field": "duration_ms" } ],
-              "bucketAggs": [ { "id": "2", "type": "terms", "field": "screen", "settings": { "order": "desc", "orderBy": "1", "size": "20" } } ]
+              "bucketAggs": [ { "id": "2", "type": "terms", "field": "props.screenLabel", "settings": { "order": "desc", "orderBy": "1", "size": "50" } } ]
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "table",
+          "title": "화면 방문수 순위",
+          "gridPos": { "h": 9, "w": 12, "x": 0, "y": 17 },
+          "datasource": { "type": "elasticsearch", "uid": "dama-events" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "showHeader": true },
+          "targets": [
+            {
+              "refId": "A",
+              "query": "type:screen_view",
+              "metrics": [ { "id": "1", "type": "count" } ],
+              "bucketAggs": [ { "id": "2", "type": "terms", "field": "props.screenLabel", "settings": { "order": "desc", "orderBy": "_count", "size": "50" } } ]
             }
           ]
         }
