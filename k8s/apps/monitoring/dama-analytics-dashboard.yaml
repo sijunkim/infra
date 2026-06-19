@@ -7,7 +7,7 @@ data:
       "tags": ["dama", "analytics"],
       "timezone": "browser",
       "schemaVersion": 39,
-      "version": 2,
+      "version": 3,
       "refresh": "5m",
       "time": { "from": "now-7d", "to": "now" },
       "templating": { "list": [] },
@@ -33,7 +33,8 @@ data:
         {
           "id": 2,
           "type": "timeseries",
-          "title": "DAU (일별 활성 사용자, anon_id 고유수)",
+          "title": "일일 사용자 수 (DAU)",
+          "description": "그날 앱을 사용한 고유 사용자(기기) 수예요. 로그인 없이도 기기 단위(익명 id)로 셉니다. 막대 하나 = 그날 사용한 사람 수.",
           "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
           "datasource": { "type": "elasticsearch", "uid": "dama-events" },
           "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 } }, "overrides": [] },
@@ -41,6 +42,7 @@ data:
           "targets": [
             {
               "refId": "A",
+              "alias": "활성 사용자",
               "query": "*",
               "metrics": [ { "id": "1", "type": "cardinality", "field": "anon_id" } ],
               "bucketAggs": [ { "id": "2", "type": "date_histogram", "field": "created_at", "settings": { "interval": "1d" } } ]
