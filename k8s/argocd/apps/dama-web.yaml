@@ -6,7 +6,7 @@ metadata:
   annotations:
     argocd-image-updater.argoproj.io/image-list: app=ghcr.io/sijunkim/dama-web
     argocd-image-updater.argoproj.io/app.update-strategy: newest-build
-    argocd-image-updater.argoproj.io/app.allow-tags: regexp:^master-
+    argocd-image-updater.argoproj.io/app.allow-tags: regexp:^dev-
     # private 패키지 — Image Updater가 태그 조회 시 ghcr-pull 자격증명 사용.
     # 컨트롤러 SA는 argocd ns 시크릿만 읽을 수 있어 argocd ns의 ghcr-pull 참조.
     argocd-image-updater.argoproj.io/app.pull-secret: pullsecret:argocd/ghcr-pull
