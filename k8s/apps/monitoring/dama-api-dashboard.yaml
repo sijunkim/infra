@@ -1,0 +1,103 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dama-api-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  dama-api.json: |
+    {
+      "uid": "dama-api",
+      "title": "Dama API (백엔드)",
+      "tags": ["dama", "backend", "spring"],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "30s",
+      "time": { "from": "now-3h", "to": "now" },
+      "templating": {
+        "list": [
+          { "name": "datasource", "type": "datasource", "query": "prometheus", "label": "Datasource", "hide": 0, "current": {} },
+          { "name": "namespace", "type": "query", "datasource": { "type": "prometheus", "uid": "${datasource}" }, "query": "label_values(process_uptime_seconds, namespace)", "refresh": 2, "includeAll": false, "label": "환경(ns)", "current": { "text": "prodesk", "value": "prodesk" } }
+        ]
+      },
+      "annotations": { "list": [] },
+      "panels": [
+        {
+          "id": 1, "type": "stat", "title": "Uptime",
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "gridPos": { "h": 4, "w": 6, "x": 0, "y": 0 },
+          "fieldConfig": { "defaults": { "unit": "s" } },
+          "targets": [ { "expr": "max(process_uptime_seconds{namespace=\"$namespace\"})", "refId": "A" } ]
+        },
+        {
+          "id": 2, "type": "stat", "title": "라이브 스레드",
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "gridPos": { "h": 4, "w": 6, "x": 6, "y": 0 },
+          "targets": [ { "expr": "max(jvm_threads_live_threads{namespace=\"$namespace\"})", "refId": "A" } ]
+        },
+        {
+          "id": 3, "type": "stat", "title": "요청률 (req/s)",
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 2 } },
+          "gridPos": { "h": 4, "w": 6, "x": 12, "y": 0 },
+          "targets": [ { "expr": "sum(rate(http_server_requests_seconds_count{namespace=\"$namespace\"}[5m]))", "refId": "A" } ]
+        },
+        {
+          "id": 4, "type": "stat", "title": "5xx 에러율 (req/s)",
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "reqps", "decimals": 2, "thresholds": { "steps": [ { "color": "green", "value": null }, { "color": "red", "value": 0.1 } ] }, "color": { "mode": "thresholds" } } },
+          "gridPos": { "h": 4, "w": 6, "x": 18, "y": 0 },
+          "targets": [ { "expr": "sum(rate(http_server_requests_seconds_count{namespace=\"$namespace\",status=~\"5..\"}[5m]))", "refId": "A" } ]
+        },
+        {
+          "id": 5, "type": "timeseries", "title": "HTTP 요청률 by status",
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "reqps" } },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+          "targets": [ { "expr": "sum(rate(http_server_requests_seconds_count{namespace=\"$namespace\"}[5m])) by (status)", "legendFormat": "{{status}}", "refId": "A" } ]
+        },
+        {
+          "id": 6, "type": "timeseries", "title": "HTTP p95 지연 by uri",
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "s" } },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+          "targets": [ { "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket{namespace=\"$namespace\"}[5m])) by (le, uri))", "legendFormat": "{{uri}}", "refId": "A" } ]
+        },
+        {
+          "id": 7, "type": "timeseries", "title": "JVM 힙 메모리",
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "bytes" } },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+          "targets": [
+            { "expr": "sum(jvm_memory_used_bytes{namespace=\"$namespace\",area=\"heap\"})", "legendFormat": "heap used", "refId": "A" },
+            { "expr": "sum(jvm_memory_committed_bytes{namespace=\"$namespace\",area=\"heap\"})", "legendFormat": "heap committed", "refId": "B" }
+          ]
+        },
+        {
+          "id": 8, "type": "timeseries", "title": "CPU 사용률",
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "percentunit", "max": 1 } },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+          "targets": [
+            { "expr": "max(process_cpu_usage{namespace=\"$namespace\"})", "legendFormat": "process", "refId": "A" },
+            { "expr": "max(system_cpu_usage{namespace=\"$namespace\"})", "legendFormat": "system", "refId": "B" }
+          ]
+        },
+        {
+          "id": 9, "type": "timeseries", "title": "GC pause (rate)",
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "s" } },
+          "gridPos": { "h": 8, "w": 12, "x": 0, "y": 20 },
+          "targets": [ { "expr": "sum(rate(jvm_gc_pause_seconds_sum{namespace=\"$namespace\"}[5m])) by (action)", "legendFormat": "{{action}}", "refId": "A" } ]
+        },
+        {
+          "id": 10, "type": "timeseries", "title": "JVM 논힙 메모리",
+          "datasource": { "type": "prometheus", "uid": "${datasource}" },
+          "fieldConfig": { "defaults": { "unit": "bytes" } },
+          "gridPos": { "h": 8, "w": 12, "x": 12, "y": 20 },
+          "targets": [ { "expr": "sum(jvm_memory_used_bytes{namespace=\"$namespace\",area=\"nonheap\"})", "legendFormat": "nonheap used", "refId": "A" } ]
+        }
+      ]
+    }

@@ -1,0 +1,23 @@
+# dama-api(백엔드) 메트릭 스크랩 — dev(prodesk) + 운영(dama-prod) 둘 다.
+# Prometheus(kube-prometheus-stack)가 /actuator/prometheus(micrometer)를 30초마다 수집.
+# 서비스 포트명 'http'(8080) 참조. /actuator는 내부(ClusterIP)로만 수집 — 외부 노출 아님.
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: dama-api
+  namespace: monitoring
+  labels:
+    release: monitoring
+spec:
+  namespaceSelector:
+    matchNames:
+      - prodesk
+      - dama-prod
+  selector:
+    matchLabels:
+      app: dama-api
+  endpoints:
+    - port: http
+      path: /actuator/prometheus
+      interval: 30s
+      scrapeTimeout: 10s

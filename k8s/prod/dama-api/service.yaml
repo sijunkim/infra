@@ -1,14 +1,16 @@
-# LAN 전용 NodePort(30808). 홈 WiFi에서 http://192.168.0.46:30808 로 접근.
-# Ingress 없음 — Traefik/DDNS 미연결이라 외부에서 접근 불가.
+# 운영 백엔드 — ClusterIP(외부는 cloudflared 터널). /actuator는 터널에서 차단(path-exclusion).
 apiVersion: v1
 kind: Service
 metadata:
   name: dama-api
   namespace: dama-prod
+  labels:
+    app: dama-api
 spec:
   type: ClusterIP
   selector:
     app: dama-api
   ports:
-    - port: 8080
+    - name: http
+      port: 8080
       targetPort: 8080
