@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: redis-pvc
+  namespace: dama-prod
+  annotations:
+    # 공유 인프라 데이터 보호: ArgoCD 가 절대 PVC 를 삭제하지 못하게 한다.
+    # PVC 가 사라지면 hostPath PV(/home/kimsijun/repository/resources/redis/db) 바인딩이 끊겨 데이터 손실 위험.
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-storage
+  volumeName: redis-prod-pv
+  resources:
+    requests:
+      storage: 2Gi

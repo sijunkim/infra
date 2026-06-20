@@ -1,0 +1,11 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - pv.yaml
+  - pvc.yaml
+  - deployment.yaml
+  - service.yaml
+generators:
+  # redis-config ConfigMap(requirepass 평문 포함)을 SOPS 복호화하여 생성.
+  # PV(redis-pv)는 데이터 보호를 위해 의도적으로 앱 관리에서 제외(이미 Retain 으로 존재).
+  - ./secret-generator.yaml

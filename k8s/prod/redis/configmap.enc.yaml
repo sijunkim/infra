@@ -1,0 +1,22 @@
+apiVersion: v1
+data:
+    redis.conf: ENC[AES256_GCM,data:NQX0c4sN394JIiAHi/WjmxiHd/oZRcfhU5ZZARxhuenR2ZBF1sdzLAbiC594BVZpZTMjiy04tDUlBCZuwK8tdaB8nanefU5CNwMxhfEMe54t83jHdYt7ugqpmJXC25k5dGxGwhRxOZrxXNrutO1AC4+Kb67OEMIYZ6QgEa/6ojNbt2/EtqxlBcod92q4KWSgxFKE1z0fa0by6MAJWtZDleUQZD4djdQiOr44kYpSJLacTc2SqcLMCbG0f1seq9r8LHptPIMxmXP5eF6xhvkjuSN+Y3mEz5kll4VZk0XuCMHlm2+eC7hmc6tx68v8nob21wVcWdi5xWnJRVbckguwafF/FDsZmlj5ai5XCU8U5XZ7gF0zjokX8tzPzxPOpmjUwtSoqCqKNvHWCf/PSn/o7Y/aNuCTmkcwJvs6WB2RPaJlRf7tYxWnBEqvWxXdLZvofoqiRC6loonxTERpUSDZlpFT3ho7Flek,iv:0Z//yoaYjsKoOWFvCckD83eC7A2+SISco0rerJMPyY0=,tag:Caim0oA19IY0x1CGhpV9DQ==,type:str]
+kind: ConfigMap
+metadata:
+    name: redis-config
+    namespace: dama-prod
+sops:
+    age:
+        - recipient: age1pkq2sx0xg0sjpr57t9yqtar5sg255fafhah9kdc5luh738xzk9psc4pkkl
+          enc: |
+            -----BEGIN AGE ENCRYPTED FILE-----
+            YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSArZm5FUTkvOExvOEViQjNW
+            WXZDSTNUZDlaTG5YVWg0RmNJL3BnRjVEQkJBCjZ6L2ZIYjl6MmNITmFXWjcydVpv
+            b0NrZCtKSm5DR3RuTTFocXUzUThuYVEKLS0tIEpod2ZMVEgxSk12ZEh1WUhaMUUz
+            U2tnVUVHeGNKWnRMaklqUy9nTVljSlUKMMQYh4uRlkEVYtUjOPU+SGfddbEUQcjV
+            BcmM5QrVKurKsW7Gg8MlCrKPysU6cvUCc0hmPWqk7o6AfyFNMfPpxg==
+            -----END AGE ENCRYPTED FILE-----
+    lastmodified: "2026-06-20T19:21:54Z"
+    mac: ENC[AES256_GCM,data:5zrQYAY0QFZ3tXBv2LSy13nU+dWqtq78BNp82q4xnkTMRZvrVaQ2rE5I9hnHNbgCwBjn+17kTe3pa8AZEVsQxqmc29x2BRbxl0H3o3C0q8oXbM3WkMP1yy8z6f6cb0Bh+cIn+FzBX5RIpuFJEYiEwQsa6VfMFY8P0OfJzMwMRZc=,iv:UAnYYe6rbaFxISDFTo9LPWFwCpJakaZFrjgfZsBWRk0=,tag:LRCOq1NnMJbSD8DqNiTD4Q==,type:str]
+    encrypted_regex: ^(data|stringData)$
+    version: 3.12.1

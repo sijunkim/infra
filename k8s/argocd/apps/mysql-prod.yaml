@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: mysql-prod
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sijunkim/infra.git
+    targetRevision: master
+    path: k8s/prod/mysql
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dama-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
