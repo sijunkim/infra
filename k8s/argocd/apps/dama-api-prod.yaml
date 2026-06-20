@@ -1,0 +1,27 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dama-api-prod
+  namespace: argocd
+  annotations:
+    argocd-image-updater.argoproj.io/image-list: app=ghcr.io/sijunkim/dama-api
+    argocd-image-updater.argoproj.io/app.update-strategy: newest-build
+    argocd-image-updater.argoproj.io/app.allow-tags: regexp:^main-
+    # private 패키지 — Image Updater가 태그 조회 시 ghcr-pull 자격증명 사용(argocd ns).
+    argocd-image-updater.argoproj.io/app.pull-secret: pullsecret:argocd/ghcr-pull
+    argocd-image-updater.argoproj.io/write-back-method: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sijunkim/infra.git
+    targetRevision: master
+    path: k8s/prod/dama-api
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: dama-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,95 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dama-api
+  namespace: dama-prod
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dama-api
+  template:
+    metadata:
+      labels:
+        app: dama-api
+    spec:
+      enableServiceLinks: false
+      imagePullSecrets:
+        - name: ghcr-pull
+      # 비루트 실행(이미지 app uid/gid=10001 과 일치). 이미지는 메모리에서만 처리 — 영속 볼륨 없음.
+      securityContext:
+        runAsUser: 10001
+        runAsGroup: 10001
+      containers:
+        - name: dama-api
+          image: ghcr.io/sijunkim/dama-api:main-10fb764
+          ports:
+            - containerPort: 8080
+          env:
+            - name: JAVA_TOOL_OPTIONS
+              value: "-XX:MaxRAMPercentage=60"
+            # 음식 일기 사진 저장 디렉토리 — 아래 meal-photos PVC 마운트 경로.
+            - name: MEAL_PHOTO_DIR
+              value: "/app/meal-photos"
+            # Elasticsearch — 냉장고 품목 검색 색인. 코드 기본값 의존 대신 서비스 DNS 명시 주입.
+            - name: ELASTICSEARCH_URI
+              value: "http://elasticsearch:9200"
+            - name: DB_HOST
+              value: "mysql"
+            - name: DB_PORT
+              value: "3306"
+            - name: DB_NAME
+              value: "dama"
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_USER
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: MYSQL_PASSWORD
+            # Redis — refresh 토큰·token_version 저장(폐기). 비번은 기존 공유 redis-secret 재사용(평문 금지).
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: REDIS_USERNAME
+              value: ""
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: REDIS_PASSWORD
+          envFrom:
+            - secretRef:
+                name: dama-api-secret
+          resources:
+            requests:
+              cpu: 100m
+              memory: 512Mi
+            limits:
+              cpu: "1"
+              memory: 1Gi
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            failureThreshold: 6
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 8080
+            initialDelaySeconds: 45
+            periodSeconds: 20
+          volumeMounts:
+            # 음식 일기 사진 영속 저장(앱의 MEAL_PHOTO_DIR 와 동일 경로).
+            - name: meal-photos
+              mountPath: /app/meal-photos
+      volumes:
+        - name: meal-photos
+          persistentVolumeClaim:
+            claimName: dama-api-meal-photos-pvc
