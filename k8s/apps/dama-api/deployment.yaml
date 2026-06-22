@@ -31,6 +31,9 @@ spec:
               value: "dev"
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:MaxRAMPercentage=60"
+            # Apple 로그인 idToken aud(=앱 번들 ID). 공개 식별자라 평문 env(비밀 아님).
+            - name: APPLE_CLIENT_ID
+              value: "com.kimsijun.dama"
             # 음식 일기 사진 저장 디렉토리 — 아래 meal-photos PVC 마운트 경로.
             - name: MEAL_PHOTO_DIR
               value: "/app/meal-photos"
