@@ -1,0 +1,123 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dama-data-strategy-dashboard
+  namespace: monitoring
+  labels:
+    grafana_dashboard: "1"
+data:
+  dama-data-strategy.json: |
+    {
+      "uid": "dama-data-strategy",
+      "title": "Dama 데이터 전략 통계",
+      "tags": ["dama", "data-strategy", "mysql"],
+      "timezone": "browser",
+      "schemaVersion": 39,
+      "version": 1,
+      "refresh": "5m",
+      "time": { "from": "now-30d", "to": "now" },
+      "templating": {
+        "list": [
+          { "name": "topn", "type": "constant", "query": "20", "label": "인기 식재료 Top N", "hide": 2, "current": { "text": "20", "value": "20" } }
+        ]
+      },
+      "annotations": { "list": [] },
+      "panels": [
+        {
+          "id": 1,
+          "type": "barchart",
+          "title": "(a) 카테고리별 현재 재고 분포",
+          "description": "fridge_item 의 현재 재고를 category 별로 집계해요. category 가 NULL 인 행은 '(미분류)' 로 묶입니다.",
+          "datasource": { "type": "mysql", "uid": "dama-mysql" },
+          "gridPos": { "h": 9, "w": 12, "x": 0, "y": 0 },
+          "fieldConfig": { "defaults": { "custom": { "orientation": "horizontal" } }, "overrides": [] },
+          "options": { "xField": "category", "legend": { "showLegend": false } },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "SELECT COALESCE(NULLIF(fi.category, ''), '(미분류)') AS category, COUNT(*) AS cnt FROM fridge_item fi GROUP BY COALESCE(NULLIF(fi.category, ''), '(미분류)') ORDER BY cnt DESC"
+            }
+          ]
+        },
+        {
+          "id": 2,
+          "type": "barchart",
+          "title": "(b) 카테고리별 소비 vs 폐기 건수",
+          "description": "fridge_consumption 의 outcome(CONSUMED/DISCARDED)을 category 별로 비교해요. 폐기 비율이 높은 카테고리를 식별합니다.",
+          "datasource": { "type": "mysql", "uid": "dama-mysql" },
+          "gridPos": { "h": 9, "w": 12, "x": 12, "y": 0 },
+          "fieldConfig": { "defaults": { "custom": { "orientation": "horizontal" } }, "overrides": [] },
+          "options": { "xField": "category", "legend": { "showLegend": true } },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "SELECT COALESCE(NULLIF(fc.category, ''), '(미분류)') AS category, SUM(fc.outcome = 'CONSUMED') AS 소비, SUM(fc.outcome = 'DISCARDED') AS 폐기 FROM fridge_consumption fc GROUP BY COALESCE(NULLIF(fc.category, ''), '(미분류)') ORDER BY (소비 + 폐기) DESC"
+            }
+          ]
+        },
+        {
+          "id": 3,
+          "type": "table",
+          "title": "(c) 인기 식재료 Top N",
+          "description": "fridge_item.ingredient_id 를 식재료 마스터(ingredient)와 JOIN 해 표준 품명별 등록 수를 셉니다. ingredient_id 매핑은 아직 구현 전이라 현재는 거의 비어 있는 게 정상이에요.",
+          "datasource": { "type": "mysql", "uid": "dama-mysql" },
+          "gridPos": { "h": 9, "w": 12, "x": 0, "y": 9 },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "showHeader": true },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "SELECT i.name AS 식재료, ic.name_ko AS 분류, COUNT(*) AS 등록수 FROM fridge_item fi JOIN ingredient i ON i.ingredient_id = fi.ingredient_id LEFT JOIN ingredient_category ic ON ic.category_code = i.category_code WHERE fi.ingredient_id IS NOT NULL GROUP BY i.ingredient_id, i.name, ic.name_ko ORDER BY 등록수 DESC LIMIT 20"
+            }
+          ]
+        },
+        {
+          "id": 4,
+          "type": "table",
+          "title": "(d) 인구통계 cohort (연령대 · 성별) — k-익명성 N>=20",
+          "description": "app_user 의 age_range/gender 별 사용자 수. k-익명성을 위해 HAVING COUNT(DISTINCT user_id) >= 20 으로 소표본 cohort 는 숨깁니다. iOS 수집 시트 배포 전이라 현재는 비어 있는 게 정상이에요.",
+          "datasource": { "type": "mysql", "uid": "dama-mysql" },
+          "gridPos": { "h": 9, "w": 12, "x": 12, "y": 9 },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "showHeader": true },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "table",
+              "rawQuery": true,
+              "rawSql": "SELECT COALESCE(au.age_range, '(미상)') AS 연령대, COALESCE(au.gender, '(미상)') AS 성별, COUNT(DISTINCT au.user_id) AS 인원 FROM app_user au WHERE au.age_range IS NOT NULL OR au.gender IS NOT NULL GROUP BY au.age_range, au.gender HAVING COUNT(DISTINCT au.user_id) >= 20 ORDER BY 인원 DESC"
+            }
+          ]
+        },
+        {
+          "id": 5,
+          "type": "timeseries",
+          "title": "(e) 일자별 등록 / 소비 추이",
+          "description": "fridge_item.registered_at(등록) 과 fridge_consumption.consumed_at(소비) 을 일 단위로 집계한 시계열이에요.",
+          "datasource": { "type": "mysql", "uid": "dama-mysql" },
+          "gridPos": { "h": 9, "w": 24, "x": 0, "y": 18 },
+          "fieldConfig": { "defaults": { "custom": { "drawStyle": "bars", "fillOpacity": 40 } }, "overrides": [] },
+          "options": { "legend": { "showLegend": true } },
+          "targets": [
+            {
+              "refId": "A",
+              "format": "time_series",
+              "rawQuery": true,
+              "rawSql": "SELECT DATE(fi.registered_at) AS time, COUNT(*) AS '등록' FROM fridge_item fi WHERE $__timeFilter(fi.registered_at) GROUP BY DATE(fi.registered_at) ORDER BY time"
+            },
+            {
+              "refId": "B",
+              "format": "time_series",
+              "rawQuery": true,
+              "rawSql": "SELECT DATE(fc.consumed_at) AS time, COUNT(*) AS '소비' FROM fridge_consumption fc WHERE $__timeFilter(fc.consumed_at) GROUP BY DATE(fc.consumed_at) ORDER BY time"
+            }
+          ]
+        }
+      ]
+    }

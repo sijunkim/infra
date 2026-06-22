@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: dama-grafana-mysql
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/sijunkim/infra.git
+    targetRevision: master
+    path: k8s/apps/dama-grafana-mysql
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: monitoring
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
