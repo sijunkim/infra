@@ -26,6 +26,9 @@ spec:
           ports:
             - containerPort: 8080
           env:
+            # 환경 프로필 — prodesk(공유 DB) dev 환경. application-dev.yml 활성(Swagger·테스트 엔드포인트 비노출).
+            - name: SPRING_PROFILES_ACTIVE
+              value: "dev"
             - name: JAVA_TOOL_OPTIONS
               value: "-XX:MaxRAMPercentage=60"
             # 음식 일기 사진 저장 디렉토리 — 아래 meal-photos PVC 마운트 경로.
