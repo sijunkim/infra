@@ -7,11 +7,28 @@ data:
       "tags": ["dama", "analytics"],
       "timezone": "browser",
       "schemaVersion": 39,
-      "version": 5,
+      "version": 6,
       "refresh": "5m",
       "time": { "from": "now-7d", "to": "now" },
       "templating": {
         "list": [
+          {
+            "name": "user",
+            "label": "사용자(user_id)",
+            "type": "query",
+            "hide": 0,
+            "skipUrlSync": false,
+            "datasource": { "type": "elasticsearch", "uid": "dama-events" },
+            "definition": "{\"find\":\"terms\",\"field\":\"user_id\",\"query\":\"platform:\\\"ios\\\"\",\"size\":200}",
+            "query": "{\"find\":\"terms\",\"field\":\"user_id\",\"query\":\"platform:\\\"ios\\\"\",\"size\":200}",
+            "refresh": 2,
+            "regex": "",
+            "sort": 1,
+            "multi": false,
+            "includeAll": false,
+            "current": { "selected": false, "text": "", "value": "" },
+            "options": []
+          },
           {
             "name": "anon",
             "label": "사용자(anon_id)",
@@ -23,7 +40,7 @@ data:
             "query": "{\"find\":\"terms\",\"field\":\"anon_id\",\"query\":\"platform:\\\"ios\\\"\",\"size\":200}",
             "refresh": 2,
             "regex": "/^(?<text>.{8}).*(?<value>.*)$/",
-            "sort": 0,
+            "sort": 1,
             "multi": false,
             "includeAll": false,
             "current": { "selected": false, "text": "", "value": "" },
@@ -40,7 +57,7 @@ data:
             "query": "{\"find\":\"terms\",\"field\":\"session_id\",\"query\":\"platform:\\\"ios\\\"\",\"size\":200}",
             "refresh": 2,
             "regex": "/^(?<text>.{8}).*(?<value>.*)$/",
-            "sort": 0,
+            "sort": 1,
             "multi": false,
             "includeAll": false,
             "current": { "selected": false, "text": "", "value": "" },
@@ -140,9 +157,27 @@ data:
         {
           "id": 6,
           "type": "table",
-          "title": "사용자(anon_id) 활동 순위",
-          "description": "로그인 userId는 현재 적재되지 않아서, 설치 단위 식별자인 anon_id를 사용자 대용으로 봅니다.",
+          "title": "사용자(user_id) 활동 순위",
+          "description": "신규 데이터부터는 Bearer 토큰에서 복원한 user_id도 함께 적재됩니다. 예전 데이터는 비어 있을 수 있어요.",
           "gridPos": { "h": 9, "w": 12, "x": 12, "y": 17 },
+          "datasource": { "type": "elasticsearch", "uid": "dama-events" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "showHeader": true },
+          "targets": [
+            {
+              "refId": "A",
+              "query": "platform:\"ios\"",
+              "metrics": [ { "id": "1", "type": "count" } ],
+              "bucketAggs": [ { "id": "2", "type": "terms", "field": "user_id", "settings": { "order": "desc", "orderBy": "_count", "size": "50" } } ]
+            }
+          ]
+        },
+        {
+          "id": 7,
+          "type": "table",
+          "title": "사용자(anon_id) 활동 순위",
+          "description": "비회원 데이터나 과거 데이터는 anon_id 기준으로 보면 됩니다.",
+          "gridPos": { "h": 9, "w": 12, "x": 0, "y": 26 },
           "datasource": { "type": "elasticsearch", "uid": "dama-events" },
           "fieldConfig": { "defaults": {}, "overrides": [] },
           "options": { "showHeader": true },
@@ -156,11 +191,64 @@ data:
           ]
         },
         {
-          "id": 7,
+          "id": 8,
+          "type": "table",
+          "title": "선택한 user_id의 최근 이벤트",
+          "description": "user_id를 먼저 고르면 해당 사용자의 최근 행동이 시간순으로 보입니다.",
+          "gridPos": { "h": 10, "w": 12, "x": 12, "y": 26 },
+          "datasource": { "type": "elasticsearch", "uid": "dama-events" },
+          "fieldConfig": { "defaults": {}, "overrides": [] },
+          "options": { "showHeader": true, "cellHeight": "sm" },
+          "targets": [
+            {
+              "refId": "A",
+              "query": "user_id:$user AND platform:\"ios\" AND (type:\"screen_view\" OR type:\"tap\")",
+              "timeField": "occurred_at",
+              "bucketAggs": [],
+              "metrics": [ { "id": "1", "type": "raw_data", "settings": { "size": "100" } } ]
+            }
+          ],
+          "transformations": [
+            {
+              "id": "organize",
+              "options": {
+                "excludeByName": {
+                  "@timestamp": true,
+                  "_id": true,
+                  "_index": true,
+                  "_score": true,
+                  "created_at": true,
+                  "app_version": true,
+                  "platform": true
+                },
+                "indexByName": {
+                  "occurred_at": 0,
+                  "type": 1,
+                  "props.screenLabel": 2,
+                  "props.nameLabel": 3,
+                  "user_id": 4,
+                  "session_id": 5,
+                  "duration_ms": 6
+                },
+                "renameByName": {
+                  "occurred_at": "시간",
+                  "type": "종류",
+                  "props.screenLabel": "화면",
+                  "props.nameLabel": "행동",
+                  "user_id": "사용자(user_id)",
+                  "session_id": "세션",
+                  "duration_ms": "체류시간(ms)"
+                }
+              }
+            }
+          ]
+        },
+        {
+          "id": 9,
           "type": "table",
           "title": "세션 활동 순위",
           "description": "세션을 바로 고르기 어렵다면 여기서 이벤트 수가 많은 최근 세션 후보를 먼저 보세요.",
-          "gridPos": { "h": 9, "w": 12, "x": 0, "y": 26 },
+          "gridPos": { "h": 10, "w": 12, "x": 0, "y": 36 },
           "datasource": { "type": "elasticsearch", "uid": "dama-events" },
           "fieldConfig": { "defaults": {}, "overrides": [] },
           "options": { "showHeader": true },
@@ -174,11 +262,11 @@ data:
           ]
         },
         {
-          "id": 8,
+          "id": 10,
           "type": "table",
-          "title": "선택한 사용자의 최근 이벤트",
-          "description": "anon_id를 먼저 고르면 해당 사용자의 최근 행동이 시간순으로 보입니다.",
-          "gridPos": { "h": 10, "w": 12, "x": 12, "y": 26 },
+          "title": "선택한 anon_id의 최근 이벤트",
+          "description": "비회원/과거 데이터는 anon_id를 먼저 고른 뒤 최근 행동을 확인하세요.",
+          "gridPos": { "h": 10, "w": 12, "x": 12, "y": 36 },
           "datasource": { "type": "elasticsearch", "uid": "dama-events" },
           "fieldConfig": { "defaults": {}, "overrides": [] },
           "options": { "showHeader": true, "cellHeight": "sm" },
@@ -225,11 +313,11 @@ data:
           ]
         },
         {
-          "id": 9,
+          "id": 11,
           "type": "table",
           "title": "선택한 세션 이벤트 타임라인",
           "description": "선택한 session_id의 화면 진입과 버튼 클릭을 시간순으로 보여줘요.",
-          "gridPos": { "h": 10, "w": 12, "x": 0, "y": 36 },
+          "gridPos": { "h": 10, "w": 12, "x": 0, "y": 46 },
           "datasource": { "type": "elasticsearch", "uid": "dama-events" },
           "fieldConfig": { "defaults": {}, "overrides": [] },
           "options": { "showHeader": true, "cellHeight": "sm" },
@@ -280,11 +368,11 @@ data:
           ]
         },
         {
-          "id": 10,
+          "id": 12,
           "type": "table",
           "title": "선택한 세션 화면 이동",
           "description": "선택한 session_id에서 실제로 본 화면만 시간순으로 보여줘요.",
-          "gridPos": { "h": 10, "w": 12, "x": 12, "y": 36 },
+          "gridPos": { "h": 10, "w": 12, "x": 12, "y": 46 },
           "datasource": { "type": "elasticsearch", "uid": "dama-events" },
           "fieldConfig": { "defaults": {}, "overrides": [] },
           "options": { "showHeader": true, "cellHeight": "sm" },
