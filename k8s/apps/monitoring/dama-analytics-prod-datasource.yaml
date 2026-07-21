@@ -1,0 +1,23 @@
+apiVersion: v1
+data:
+  dama-events-prod-datasource.yaml: |
+    apiVersion: 1
+    datasources:
+      # 운영(dama-prod) 행동분석 이벤트 ES. Grafana 는 monitoring ns 라 FQDN 으로 prod ES 를 가리킨다
+      # (앱은 ns-로컬 DNS 로 elasticsearch→elasticsearch.dama-prod 자동 resolve, 여기선 Grafana 라 명시 FQDN).
+      - name: dama-events-prod
+        uid: dama-events-prod
+        type: elasticsearch
+        access: proxy
+        url: http://elasticsearch.dama-prod:9200
+        isDefault: false
+        editable: true
+        jsonData:
+          index: dama-event
+          timeField: created_at
+kind: ConfigMap
+metadata:
+  labels:
+    grafana_datasource: "1"
+  name: dama-analytics-prod-datasource
+  namespace: monitoring
