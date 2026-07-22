@@ -4,9 +4,11 @@ metadata:
   name: redis
   namespace: dama-prod
 spec:
-  type: ClusterIP
+  # NodePort(31379): 같은 WiFi(LAN)에서 dbGateway-prod 접근용. 공유기 포워딩 미설정 → 인터넷 미노출.
+  type: NodePort
   selector:
     app: redis
   ports:
     - port: 6379
       targetPort: 6379
+      nodePort: 31379

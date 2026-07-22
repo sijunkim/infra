@@ -4,9 +4,11 @@ metadata:
   name: mysql
   namespace: dama-prod
 spec:
-  type: ClusterIP
+  # NodePort(31306): 같은 WiFi(LAN)에서 dbGateway-prod 접근용. 공유기 포워딩 미설정 → 인터넷 미노출.
+  type: NodePort
   selector:
     app: mysql
   ports:
   - port: 3306
     targetPort: 3306
+    nodePort: 31306
